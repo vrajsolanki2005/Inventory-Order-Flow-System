@@ -5,7 +5,7 @@ const router = express.Router();
 const User = require('../models/userModel');
 const db = require('../config/db');
 const bcrypt = require('bcryptjs');
-const {isStrongPassword} = require('../utils/validator');
+const { isStrongPassword } = require('../utils/validator');
 
 
 //register
