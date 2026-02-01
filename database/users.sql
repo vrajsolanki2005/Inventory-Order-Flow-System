@@ -4,7 +4,10 @@ CREATE TABLE users (
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'user', 'staff') DEFAULT 'user',
+    role ENUM('admin', 'user', 'staff') DEFAULT 'staff',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+UPDATE users
+SET role = 'admin'
+WHERE email='admin1@dev.com';

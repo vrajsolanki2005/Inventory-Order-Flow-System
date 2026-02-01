@@ -7,3 +7,14 @@ CREATE TABLE products (
     stock BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
+-- adding the new colum of low_stock_threshold if stock value <5 or is_active
+ALTER TABLE products 
+ADD COLUMN low_stock_threshold BOOLEAN,
+ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
+
+UPDATE products
+SET low_stock_threshold = 
+    CASE 
+        WHEN stock < 5 OR is_active = TRUE THEN TRUE
+        ELSE FALSE
+    END;

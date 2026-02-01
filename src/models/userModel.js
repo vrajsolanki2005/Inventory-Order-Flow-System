@@ -24,6 +24,12 @@ const User = {
         const query = 'SELECT * FROM users WHERE email = ?';
         const [rows] = await db.execute(query, [email]);
         return rows[0];
+    },
+    //find user by id
+    async findUserById(id) {
+        const query = 'SELECT * FROM users WHERE user_id = ?';
+        const [rows] = await db.execute(query, [id]);
+        return rows[0];
     }
 };
 module.exports = User;

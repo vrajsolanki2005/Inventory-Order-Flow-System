@@ -57,14 +57,15 @@ router.post('/login', async(req, res) =>{
         if(!user){
             return res.status(400).json({message: 'Invalid credentials'});
         }
+        console.log('User found:', {id: user.user_id, email: user.email, role: user.role});
         //check password
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch){
             return res.status(400).json({message: 'Invalid credentials'});
         }
         //create token
-        const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: '1d'});
-        res.json({token, user:{id: user.id, username: user.username, email: user.email}});
+        const token = jwt.sign({id: user.user_id}, process.env.JWT_SECRET, {expiresIn: '1d'});
+        res.json({token, user:{id: user.user_id, username: user.username, email: user.email, role: user.role}});
         
     }catch(error){
         console.error(error);
