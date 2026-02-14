@@ -10,12 +10,10 @@ const {validateProduct} = require('../utils/validator');
 //GET ALL PRODUCTS
 router.get('/products', async(req, res) => {
     try{
-        //fetch data from db
         const [products] = await db.query("SELECT productname, sku, price, stock FROM products WHERE is_active = true");
         res.status(200).json({message: "Products fetched successfully", data: products});
     }
     catch(error){
-        console.error(error);
         res.status(500).json({message: 'Error fetching products'});
     }
 })
@@ -24,12 +22,10 @@ router.get('/products', async(req, res) => {
 router.get('/products/:id', async(req, res) => {
     try{
         const {id} = req.params;
-        //fetch data from db
         const [product] = await db.query("SELECT productname, sku, price, stock FROM products WHERE product_id = ? AND is_active = true", [id]);
         res.status(200).json({message: "Product fetched successfully", data: product[0]});
     }
     catch(error){
-        console.error(error);
         res.status(500).json({message: 'Error fetching product'});
     }
 })
@@ -58,7 +54,6 @@ router.post('/product', authenticateToken, isAdmin, async(req, res) => {
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ message: "SKU already exists" });
         }
-        console.error(error);
         res.status(500).json({ message: 'Error creating product' });
     }
 })
@@ -118,7 +113,6 @@ router.put('/products/:id', authenticateToken, isAdmin, async(req, res) => {
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ message: "SKU already exists" });
         }
-        console.error('Update error:', error);
         res.status(500).json({ message: 'Error updating product: ' + error.message });
     }
 })
@@ -132,7 +126,6 @@ router.delete('/products/:id', authenticateToken, isAdmin, async(req, res) => {
         res.status(200).json({message: "Product deleted successfully"});
     }
     catch(error){
-        console.error(error);
         res.status(500).json({message: 'Error deleting product'});
     }
 });
