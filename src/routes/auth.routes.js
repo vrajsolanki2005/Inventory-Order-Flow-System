@@ -65,12 +65,19 @@ router.post('/login', async(req, res) =>{
         }
         //create token
         const token = jwt.sign({id: user.user_id}, process.env.JWT_SECRET, {expiresIn: '1d'});
+        res.cookie('token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
         res.json({token, user:{id: user.user_id, username: user.username, email: user.email, role: user.role}});
         
     }catch(error){
         console.error(error);
         res.status(500).json({message: 'Error logging in'});
     }
+});
+
+//logout
+router.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.json({message: 'Logged out successfully'});
 });
 
 module.exports = router;
