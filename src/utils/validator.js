@@ -15,3 +15,15 @@ exports.validateProduct = (price, stock, low_stock_threshold) => {
     }
     return { valid: true };
 };
+exports.validateItems = (req, res, next) => {
+    const { items } = req.body;
+    if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ message: 'Items cannot be empty' });
+    }
+    for (const item of items) {
+        if (!item.product_id || !item.quantity) {
+            return res.status(400).json({ message: 'Invalid item data' });
+        }
+    }
+    next();
+};
