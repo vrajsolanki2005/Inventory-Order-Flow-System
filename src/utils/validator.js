@@ -24,6 +24,9 @@ exports.validateItems = (req, res, next) => {
         if (!item.product_id || !item.quantity) {
             return res.status(400).json({ message: 'Invalid item data' });
         }
+        if (item.quantity <= 0) {
+            return res.status(400).json({ message: 'Quantity must be greater than 0' });
+        }
     }
     next();
 };
