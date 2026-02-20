@@ -78,12 +78,10 @@ const createOrder = async (userId, items) => {
     }
 };
 
-const getAllOrders = async (userId, role) => {
-    const query = role === 'Admin' 
-        ? 'SELECT o.*, u.username FROM orders o JOIN users u ON o.user_id = u.user_id ORDER BY o.created_at DESC'
-        : 'SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC';
-    
-    const [orders] = role === 'Admin' ? await db.query(query) : await db.query(query, [userId]);
+const getAllOrders = async () => {
+    const [orders] = await db.query(
+        'SELECT o.*, u.username FROM orders o JOIN users u ON o.user_id = u.user_id ORDER BY o.created_at DESC'
+    );
     return orders;
 };
 
@@ -163,7 +161,7 @@ const updateOrderQuantity = async (orderId, userId, role, items) => {
         
         const order = orders[0];
         
-        if (role !== 'admin' && order.user_id != userId) {
+        if (role !== 'Admin' && order.user_id != userId) {
             throw new Error('Unauthorized');
         }
 
@@ -246,4 +244,25 @@ const updateOrderQuantity = async (orderId, userId, role, items) => {
     }
 };
 
-module.exports = { createOrder, getAllOrders, updateOrderStatus, cancelOrder, updateOrderQuantity };
+const getUserOrders = async (userId) => {
+    const query = `
+        SELECT o.*, 
+               JSON_ARRAYAGG(
+                   JSON_OBJECT(
+                       'product_id', oi.product_id,
+                       'quantity', oi.quantity,
+                       'unit_price', oi.unit_price
+                   )
+               ) AS items
+        FROM orders o
+        LEFT JOIN order_items oi ON o.order_id = oi.order_id
+        WHERE o.user_id = ?
+        GROUP BY o.order_id
+        ORDER BY o.created_at DESC
+    `;
+
+    const [orders] = await db.query(query, [userId]);
+    return orders;
+};
+
+module.exports = { createOrder, getAllOrders, updateOrderStatus, cancelOrder, updateOrderQuantity, getUserOrders };

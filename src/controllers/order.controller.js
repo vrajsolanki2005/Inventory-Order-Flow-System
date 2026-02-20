@@ -20,7 +20,7 @@ const createOrder = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
     try {
-        const orders = await orderService.getAllOrders(req.user.user_id, req.user.role);
+        const orders = await orderService.getAllOrders();
         res.json(orders);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -56,4 +56,13 @@ const updateOrderQuantity = async (req, res) => {
     }
 };
 
-module.exports = { createOrder, getAllOrders, updateOrderStatus, cancelOrder, updateOrderQuantity };
+const getUserOrders = async (req, res) => {
+    try {
+        const orders = await orderService.getUserOrders(req.params.userId, req.user.user_id, req.user.role);
+        res.json(orders);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+module.exports = { createOrder, getAllOrders, updateOrderStatus, cancelOrder, updateOrderQuantity, getUserOrders };
